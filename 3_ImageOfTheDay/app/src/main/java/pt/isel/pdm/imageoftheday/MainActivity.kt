@@ -13,6 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalConsumer
@@ -113,6 +114,7 @@ fun NasaImageView(image: NasaImage) {
                 Modifier
                     .height(300.dp)
                     .fillMaxWidth()
+                    .background(Color.Green)
             )
             {
                 Image(
@@ -120,14 +122,15 @@ fun NasaImageView(image: NasaImage) {
                     contentDescription = "",
                     modifier = Modifier
                         .height(400.dp)
-                        .align(Alignment.Center),
-                    contentScale = ContentScale.FillWidth
+                        .align(Alignment.Center)
+                        .fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
                 Box(
                     Modifier
-                        .background(Color.White)
                         .fillMaxWidth()
-                        .align(Alignment.Center)
+                        .align(Alignment.BottomEnd)
+                        .background(Color(1f,1f,1f,0.5f))
                 ) {
                     Text(
 
