@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -24,7 +25,7 @@ const val TAG = "QuoteOfTheDay"
 
 class MainActivity : ComponentActivity() {
 
-    val quoteService: QuoteService by lazy { (application as QuoteOfTheDayApplication).quoteService }
+    val quoteService: QuoteService by lazy { (application as DependencyContainer).quoteService }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,7 +79,10 @@ fun QuoteScreen(quote: Quote?, isLoading: Boolean, fetchQuote: () -> Unit) {
 fun LoadingButton(isLoading: Boolean, onUpdateRequested: () -> Unit) {
     Log.d(TAG, "LoadingButton")
 
-    Button(onClick = onUpdateRequested, enabled = !isLoading) {
+    Button(
+        onClick = onUpdateRequested,
+        enabled = !isLoading,
+        modifier = Modifier.testTag(TestTags.LoadingButtonTag)) {
 
         val text = if (isLoading)
             stringResource(id = R.string.loading)
@@ -97,7 +101,7 @@ fun QuoteViewPreview() {
 
 @Composable
 fun QuoteView(q: Quote) {
-    Column {
+    Column(modifier = Modifier.testTag(TestTags.QuoteViewTag)) {
         Text(
             text = q.quote,
             fontStyle = FontStyle.Italic,
