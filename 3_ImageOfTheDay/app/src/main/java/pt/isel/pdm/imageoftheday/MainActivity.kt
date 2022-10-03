@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
@@ -22,11 +23,28 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import pt.isel.pdm.imageoftheday.ui.NasaImageScreen
 import pt.isel.pdm.imageoftheday.ui.theme.ImageOfTheDayTheme
+import pt.isel.pdm.imageoftheday.viewmodel.MainViewModel
 
 
 const val TAG = "ImageOfTheDay"
+
 class MainActivity : ComponentActivity() {
+
+    private val nasaService by lazy { (application as DependencyContainer).imageService }
+
+    @Suppress("UNCHECKED_CAST")
+    private val viewModel by viewModels<MainViewModel> {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return MainViewModel(nasaService) as T
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -36,130 +54,26 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    NasaImageScreen()
-                }
-            }
-        }
-    }
-}
+                    var onNext: (() -> Unit)? = null
 
-@Preview
-@Composable
-fun NasaImageScreen() {
+                    if (viewModel.canTurnOnNext)
+                        onNext = { viewModel.fetchNext() }
 
-    Log.i(TAG,"NasaImageScreen Composition");
-
-    var idx = remember{ mutableStateOf(0) }
-
-    Column() {
-        Column() {
-            NasaImageView(image = NasaImages.Images[idx.value])
-        }
-
-        NextPrevButtons(
-            onNext = { idx.value = (idx.value+1) % NasaImages.Images.size },
-            onPrev = {
-                if(idx.value == 0)
-                    idx.value = NasaImages.Images.size - 1
-                else
-                    idx.value--;
-            }
-        )
-
-    }
-}
-
-
-@Composable
-fun NextPrevButtons(onPrev : ()->Unit, onNext : ()->Unit)
-{
-    Row()
-    {
-        Button(onClick = {
-            Log.i(TAG,"Prev clicked ");
-            onPrev()
-        }) {
-            Text("Prev")
-        }
-        Button(
-            onClick = {
-                Log.i(TAG,"Next clicked ");
-                onNext()
-            }) {
-            Text("Next")
-        }
-    }
-}
-
-@Preview
-@Composable
-fun NasaImageViewPreview() {
-    NasaImageView(image = NasaImages.Images[0])
-}
-
-@Composable
-fun NasaImageView(image: NasaImage) {
-
-    Log.i(TAG,"NasaImageView Composition");
-    ImageOfTheDayTheme() {
-        val textGenericModifier = Modifier
-            .padding(end = 6.dp)
-            .fillMaxWidth()
-
-
-
-        Column(modifier = Modifier.padding(top = 12.dp))
-        {
-            Box(
-                Modifier
-                    .height(300.dp)
-                    .fillMaxWidth()
-                    .background(Color.Green)
-            )
-            {
-                Image(
-                    painter = painterResource(id = image.resource),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .height(400.dp)
-                        .align(Alignment.Center)
-                        .fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomEnd)
-                        .background(Color(1f,1f,1f,0.5f))
-                ) {
-                    Text(
-
-                        text = image.title,
-                        modifier = textGenericModifier,
-                        textAlign = TextAlign.End
+                    NasaImageScreen(
+                        viewModel.nasaImage,
+                        fetchToday = { viewModel.fetchTodayImage() },
+                        onPrev = viewModel::fetchPrev,
+                        //onNext = if(viewModel.canTurnOnNext) {viewModel.fetchNext()} else null
+                        onNext = onNext
                     )
+
                 }
             }
-
-            Text(
-                text = image.date,
-                modifier = textGenericModifier,
-                textAlign = TextAlign.End,
-                style = MaterialTheme.typography.overline,
-
-                )
-
-            Text(
-                text = image.author,
-                modifier = textGenericModifier,
-                textAlign = TextAlign.End,
-                style = MaterialTheme.typography.subtitle1,
-                fontStyle = FontStyle.Italic
-
-            )
-
-
         }
     }
 }
+
+
+
+
 

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
@@ -19,6 +20,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import pt.isel.pdm.quoteoftheday.ui.theme.QuoteOfTheDayTheme
 
 const val TAG = "QuoteOfTheDay"
@@ -26,6 +32,14 @@ const val TAG = "QuoteOfTheDay"
 class MainActivity : ComponentActivity() {
 
     val quoteService: QuoteService by lazy { (application as DependencyContainer).quoteService }
+
+    val viewModel by viewModels<QuoteOfTheDayViewModel> {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return QuoteOfTheDayViewModel(quoteService) as T
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,22 +52,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Log.d(TAG, "ONCREATE")
-                    var quote by remember {
-                        mutableStateOf<Quote?>(null)
-                    }
-
-                    var isLoading by remember {
-                        mutableStateOf(false)
-                    }
-
                     QuoteScreen(
-                        quote = quote,
+                        quote = viewModel.quote,
                         fetchQuote = {
-                            isLoading = true;
-                            quote = quoteService.fetchQuote()
-                            isLoading = false;
+                            viewModel.fetchQuote()
                         },
-                        isLoading = isLoading
+                        isLoading = viewModel.isLoading
                     )
                 }
             }
@@ -82,7 +86,8 @@ fun LoadingButton(isLoading: Boolean, onUpdateRequested: () -> Unit) {
     Button(
         onClick = onUpdateRequested,
         enabled = !isLoading,
-        modifier = Modifier.testTag(TestTags.LoadingButtonTag)) {
+        modifier = Modifier.testTag(TestTags.LoadingButtonTag)
+    ) {
 
         val text = if (isLoading)
             stringResource(id = R.string.loading)

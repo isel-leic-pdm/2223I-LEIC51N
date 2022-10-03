@@ -9,7 +9,7 @@ object TestQuotes {
 }
 
 class TestQuoteService : QuoteService {
-    override fun fetchQuote(): Quote {
+    override suspend fun fetchQuote(): Quote {
         return TestQuotes.default
     }
 }
@@ -27,4 +27,6 @@ class QoDCustomRunner : AndroidJUnitRunner() {
     ): Application {
         return super.newApplication(cl, TestQuoteOfTheDayApplication::class.java.name, context)
     }
+
+
 }
