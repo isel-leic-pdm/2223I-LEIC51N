@@ -1,21 +1,32 @@
 package pt.isel.pdm.imageoftheday.services
 
+import android.icu.util.LocaleData
 import kotlinx.coroutines.delay
 import pt.isel.pdm.imageoftheday.R
 import pt.isel.pdm.imageoftheday.model.NasaImage
+import java.security.InvalidParameterException
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class FakeNasaService : NasaImageOfTheDayService {
 
-    var currIdx = 0;
-    override suspend fun getTodayImage(): NasaImage {
-        return getImageOf("")
-    }
 
-    override suspend fun getImageOf(date: String) : NasaImage {
+    private val imagesToReturn = mutableMapOf<String, NasaImage>()
+        .apply {
+            var date = LocalDate.now()
+            for (img in NasaImages.Images) {
+                put(date.format(DateTimeFormatter.ISO_LOCAL_DATE), img)
+                date = date.minusDays(1)
+            }
+        }
+
+    override suspend fun getImageOf(date: String): NasaImage {
         delay(2000);
-        val ret = NasaImages.Images[currIdx];
-        currIdx = ++currIdx % NasaImages.Images.size
-        return ret
+
+        if (imagesToReturn.containsKey(date))
+            return imagesToReturn.get(date)!!
+
+        throw InvalidParameterException("Date must be between Jun 16, 1995 and Oct 10, 2022.")
     }
 }
 

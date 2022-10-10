@@ -9,40 +9,38 @@ import kotlinx.coroutines.launch
 import pt.isel.pdm.imageoftheday.model.NasaImage
 import pt.isel.pdm.imageoftheday.services.NasaImageOfTheDayService
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
-class MainViewModel(private val nasaService : NasaImageOfTheDayService) : ViewModel() {
+class MainViewModel(private val nasaService: NasaImageOfTheDayService) : ViewModel() {
 
     var nasaImage by mutableStateOf<NasaImage?>(null)
 
     var canTurnOnNext by mutableStateOf(false)
 
+    var errorMessage: String? by mutableStateOf(null)
 
-    fun fetchTodayImage()
-    {
+    private var currDate = LocalDate.now()
+    private var todayDate = LocalDate.now()
+    fun fetchTodayImage() {
         viewModelScope.launch {
-            nasaImage = nasaService.getTodayImage()
-
+            val dateString = currDate.format(DateTimeFormatter.ISO_LOCAL_DATE)
+            try {
+                nasaImage = nasaService.getImageOf(dateString)
+            } catch (e: Exception) {
+                errorMessage = e.message
+            }
+            canTurnOnNext = currDate < todayDate;
         }
     }
 
-    fun fetchPrev()
-    {
-        viewModelScope.launch {
-            val prevDate = ""
-            nasaImage = nasaService.getImageOf(prevDate)
-            canTurnOnNext = true
-        }
+    fun fetchPrev() {
+        currDate = currDate.minusDays(1)
+        fetchTodayImage()
     }
 
-    fun fetchNext()
-    {
-        viewModelScope.launch {
-            val nextDate = ""
-            nasaImage = nasaService.getImageOf(nextDate)
-
-            if(true ) //check if curr is current date
-                canTurnOnNext = false
-        }
+    fun fetchNext() {
+        currDate = currDate.plusDays(1)
+        fetchTodayImage()
     }
 }

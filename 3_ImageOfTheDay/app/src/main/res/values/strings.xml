@@ -3,4 +3,5 @@
     <string name="fetch_today">Fetch Today</string>
     <string name="fetch_prev">Fetch Prev</string>
     <string name="fetch_next">Fetch Next</string>
+    <string name="title_activity_info">InfoActivity</string>
 </resources>

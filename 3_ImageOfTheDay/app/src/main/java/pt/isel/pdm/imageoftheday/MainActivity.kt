@@ -1,8 +1,10 @@
 package pt.isel.pdm.imageoftheday
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -25,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import pt.isel.pdm.imageoftheday.ui.InfoActivity
 import pt.isel.pdm.imageoftheday.ui.NasaImageScreen
 import pt.isel.pdm.imageoftheday.ui.theme.ImageOfTheDayTheme
 import pt.isel.pdm.imageoftheday.viewmodel.MainViewModel
@@ -63,16 +66,44 @@ class MainActivity : ComponentActivity() {
                         viewModel.nasaImage,
                         fetchToday = { viewModel.fetchTodayImage() },
                         onPrev = viewModel::fetchPrev,
-                        //onNext = if(viewModel.canTurnOnNext) {viewModel.fetchNext()} else null
-                        onNext = onNext
+                        onNext = onNext,
+                        navigateToInfoActivity = { navigateToInfoActivity() }
                     )
 
+                    ErrorView(viewModel.errorMessage, { err ->
+                        onError(err)
+                        viewModel.errorMessage = null
+                    })
                 }
             }
         }
     }
+
+    private fun onError(err: String) {
+        Toast.makeText(
+            this,
+            err,
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    fun navigateToInfoActivity() {
+        val intent = Intent(this, InfoActivity::class.java)
+        startActivity(intent)
+    }
+
 }
 
+@Composable
+private fun ErrorView(
+    errorMessage: String?,
+    errorAvailable: (String) -> Unit
+) {
+    if (errorMessage == null)
+        return
+
+    errorAvailable(errorMessage)
+}
 
 
 

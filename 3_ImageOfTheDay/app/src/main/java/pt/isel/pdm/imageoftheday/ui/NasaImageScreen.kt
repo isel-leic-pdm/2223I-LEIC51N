@@ -1,5 +1,6 @@
 package pt.isel.pdm.imageoftheday.ui
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
@@ -22,11 +23,16 @@ fun NasaImageScreen(
     fetchToday: () -> Unit,
     onPrev: (() -> Unit)?,
     onNext: (() -> Unit)?,
+    navigateToInfoActivity: () -> Unit
 ) {
     Log.i(TAG, "NasaImageScreen Composition");
 
     Scaffold(
-        topBar = { TopBar() },
+        topBar = {
+            TopBar(
+                showInfoScreen = { navigateToInfoActivity() }
+            )
+        },
     )
     { paddingValues ->
         Column() {
@@ -52,3 +58,4 @@ fun NasaImageScreen(
 
 
 }
+

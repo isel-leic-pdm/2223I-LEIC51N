@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "pt.isel.pdm.imageoftheday"
-        minSdk 21
+        minSdk 28
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -59,4 +59,5 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
 }
