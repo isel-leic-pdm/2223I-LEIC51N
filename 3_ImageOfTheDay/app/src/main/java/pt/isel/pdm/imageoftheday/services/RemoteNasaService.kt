@@ -1,9 +1,11 @@
 package pt.isel.pdm.imageoftheday.services
 
+import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import pt.isel.pdm.imageoftheday.R
 import pt.isel.pdm.imageoftheday.model.NasaImage
+import pt.isel.pdm.imageoftheday.model.dto.NasaImageDto
 import java.io.IOException
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -15,6 +17,7 @@ class RemoteNasaService(
 
 
     private val httpClient = OkHttpClient()
+    private val gson = Gson()
 
 
     override suspend fun getImageOf(date: String): NasaImage {
@@ -28,20 +31,24 @@ class RemoteNasaService(
             .url(url)
             .build()
 
-        val resp = suspendCoroutine<Response> { continuation ->
+        return suspendCoroutine<NasaImage> { continuation ->
             httpClient.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     continuation.resumeWithException(e)
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    continuation.resume(response)
+
+                    if (response.isSuccessful == false || response.body == null)
+                        continuation.resumeWithException(Exception(response.message))
+                    else {
+                        val contentData = response.body?.string()
+                        val dto = gson.fromJson(contentData, NasaImageDto::class.java)
+                        continuation.resume(NasaImageDto.toNasaImage(dto))
+                    }
                 }
             })
         }
 
-        val contentData = resp.body?.string()
-        val X = contentData
-        return NasaImage(X!!, ",", "", "", "", R.drawable.greatlacerta_ruuth_960)
     }
 }

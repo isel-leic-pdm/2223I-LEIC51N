@@ -23,7 +23,8 @@ fun NasaImageScreen(
     fetchToday: () -> Unit,
     onPrev: (() -> Unit)?,
     onNext: (() -> Unit)?,
-    navigateToInfoActivity: () -> Unit
+    navigateToInfoActivity: () -> Unit,
+    isLoading : Boolean
 ) {
     Log.i(TAG, "NasaImageScreen Composition");
 
@@ -40,7 +41,10 @@ fun NasaImageScreen(
                 if (image != null)
                     NasaImageView(image = image)
                 else
-                    Button(onClick = fetchToday) {
+                    Button(
+                        onClick = fetchToday,
+                        enabled = !isLoading
+                    ) {
                         Text(text = stringResource(id = R.string.fetch_today))
                     }
             }
@@ -50,7 +54,8 @@ fun NasaImageScreen(
 
             NextPrevButtons(
                 onNext = onNext,
-                onPrev = onPrev
+                onPrev = onPrev,
+                disableButtons = isLoading
             )
 
         }

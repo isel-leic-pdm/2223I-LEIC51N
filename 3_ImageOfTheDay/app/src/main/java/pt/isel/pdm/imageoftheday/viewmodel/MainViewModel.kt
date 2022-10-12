@@ -10,7 +10,6 @@ import pt.isel.pdm.imageoftheday.model.NasaImage
 import pt.isel.pdm.imageoftheday.services.NasaImageOfTheDayService
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class MainViewModel(private val nasaService: NasaImageOfTheDayService) : ViewModel() {
 
@@ -20,27 +19,32 @@ class MainViewModel(private val nasaService: NasaImageOfTheDayService) : ViewMod
 
     var errorMessage: String? by mutableStateOf(null)
 
+    var isLoading by mutableStateOf(false)
+
     private var currDate = LocalDate.now()
     private var todayDate = LocalDate.now()
-    fun fetchTodayImage() {
+
+    fun fetchCurrentDateImage() {
         viewModelScope.launch {
+            isLoading = true
             val dateString = currDate.format(DateTimeFormatter.ISO_LOCAL_DATE)
             try {
                 nasaImage = nasaService.getImageOf(dateString)
             } catch (e: Exception) {
                 errorMessage = e.message
             }
+            isLoading = false
             canTurnOnNext = currDate < todayDate;
         }
     }
 
     fun fetchPrev() {
         currDate = currDate.minusDays(1)
-        fetchTodayImage()
+        fetchCurrentDateImage()
     }
 
     fun fetchNext() {
         currDate = currDate.plusDays(1)
-        fetchTodayImage()
+        fetchCurrentDateImage()
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import pt.isel.pdm.imageoftheday.TAG
 import pt.isel.pdm.imageoftheday.model.NasaImage
 import pt.isel.pdm.imageoftheday.ui.theme.ImageOfTheDayTheme
@@ -23,7 +24,7 @@ import pt.isel.pdm.imageoftheday.ui.theme.ImageOfTheDayTheme
 @Composable
 fun NasaImageView(image: NasaImage) {
 
-    Log.i(TAG,"NasaImageView Composition");
+    Log.i(TAG, "NasaImageView Composition");
     ImageOfTheDayTheme() {
         val textGenericModifier = Modifier
             .padding(end = 6.dp)
@@ -41,7 +42,8 @@ fun NasaImageView(image: NasaImage) {
             )
             {
                 Image(
-                    painter = painterResource(id = image.resource),
+                    //painter = painterResource(id = image.url),
+                    painter = rememberAsyncImagePainter(image.url),
                     contentDescription = "",
                     modifier = Modifier
                         .height(400.dp)
@@ -53,7 +55,7 @@ fun NasaImageView(image: NasaImage) {
                     Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomEnd)
-                        .background(Color(1f,1f,1f,0.5f))
+                        .background(Color(1f, 1f, 1f, 0.5f))
                 ) {
                     Text(
 
@@ -72,14 +74,15 @@ fun NasaImageView(image: NasaImage) {
 
                 )
 
-            Text(
-                text = image.author,
-                modifier = textGenericModifier,
-                textAlign = TextAlign.End,
-                style = MaterialTheme.typography.subtitle1,
-                fontStyle = FontStyle.Italic
+            if (image.author != null)
+                Text(
+                    text = image.author,
+                    modifier = textGenericModifier,
+                    textAlign = TextAlign.End,
+                    style = MaterialTheme.typography.subtitle1,
+                    fontStyle = FontStyle.Italic
 
-            )
+                )
 
 
         }

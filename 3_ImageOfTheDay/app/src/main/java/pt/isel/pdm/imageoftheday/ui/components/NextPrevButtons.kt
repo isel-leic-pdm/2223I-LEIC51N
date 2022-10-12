@@ -10,15 +10,19 @@ import pt.isel.pdm.imageoftheday.TAG
 @Composable
 fun NextPrevButtons(
     onPrev: (() -> Unit)?,
-    onNext: (() -> Unit)?
+    onNext: (() -> Unit)?,
+    disableButtons: Boolean
 ) {
     Row()
     {
         if (onPrev != null) {
-            Button(onClick = {
-                Log.i(TAG, "Prev clicked ");
-                onPrev()
-            }) {
+            Button(
+                onClick = {
+                    Log.i(TAG, "Prev clicked ");
+                    onPrev()
+                },
+                enabled = !disableButtons
+            ) {
                 Text("Prev")
             }
         }
@@ -28,7 +32,9 @@ fun NextPrevButtons(
                 onClick = {
                     Log.i(TAG, "Next clicked ");
                     onNext()
-                }) {
+                },
+                enabled = !disableButtons
+            ) {
                 Text("Next")
             }
         }
