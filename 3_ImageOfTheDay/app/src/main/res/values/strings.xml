@@ -4,4 +4,5 @@
     <string name="fetch_prev">Fetch Prev</string>
     <string name="fetch_next">Fetch Next</string>
     <string name="title_activity_info">InfoActivity</string>
+    <string name="title_activity_image_detail">ImageDetailActivity</string>
 </resources>

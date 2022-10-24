@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import pt.isel.pdm.imageoftheday.ui.InfoActivity
 import pt.isel.pdm.imageoftheday.ui.NasaImageScreen
 import pt.isel.pdm.imageoftheday.ui.theme.ImageOfTheDayTheme
 import pt.isel.pdm.imageoftheday.viewmodel.MainViewModel
@@ -24,6 +23,8 @@ const val TAG = "ImageOfTheDay"
 class MainActivity : ComponentActivity() {
 
     private val nasaService by lazy { (application as DependencyContainer).imageService }
+    private val navService by lazy { (application as DependencyContainer).navigationService }
+
 
     @Suppress("UNCHECKED_CAST")
     private val viewModel by viewModels<MainViewModel> {
@@ -47,16 +48,19 @@ class MainActivity : ComponentActivity() {
 
                     if (viewModel.canTurnOnNext)
                         onNext = {
-                            viewModel.fetchNext() }
+                            viewModel.fetchNext()
+                        }
 
                     NasaImageScreen(
                         viewModel.nasaImage,
                         fetchToday = {
-                            viewModel.fetchCurrentDateImage() },
+                            viewModel.fetchCurrentDateImage()
+                        },
                         onPrev = viewModel::fetchPrev,
                         onNext = onNext,
-                        navigateToInfoActivity = { navigateToInfoActivity() },
-                        isLoading = viewModel.isLoading
+                        navigateToInfoActivity = { navService.navigateToInfo(this) },
+                        isLoading = viewModel.isLoading,
+                        onImageClicked = { nasaImage -> navService.navigateToDetail(this, nasaImage) }
                     )
 
                     ErrorView(viewModel.errorMessage, { err ->
@@ -76,10 +80,6 @@ class MainActivity : ComponentActivity() {
         ).show()
     }
 
-    fun navigateToInfoActivity() {
-        val intent = Intent(this, InfoActivity::class.java)
-        startActivity(intent)
-    }
 
 }
 

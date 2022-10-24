@@ -24,7 +24,8 @@ fun NasaImageScreen(
     onPrev: (() -> Unit)?,
     onNext: (() -> Unit)?,
     navigateToInfoActivity: () -> Unit,
-    isLoading : Boolean
+    onImageClicked: (NasaImage) -> Unit,
+    isLoading: Boolean
 ) {
     Log.i(TAG, "NasaImageScreen Composition");
 
@@ -39,7 +40,10 @@ fun NasaImageScreen(
         Column() {
             Column() {
                 if (image != null)
-                    NasaImageView(image = image)
+                    NasaImageView(
+                        image = image,
+                        onClick = onImageClicked
+                    )
                 else
                     Button(
                         onClick = fetchToday,

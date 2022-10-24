@@ -3,6 +3,7 @@ package pt.isel.pdm.imageoftheday.ui.components
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -18,11 +19,15 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import pt.isel.pdm.imageoftheday.TAG
 import pt.isel.pdm.imageoftheday.model.NasaImage
+import pt.isel.pdm.imageoftheday.services.NasaImages
 import pt.isel.pdm.imageoftheday.ui.theme.ImageOfTheDayTheme
 
 
 @Composable
-fun NasaImageView(image: NasaImage) {
+fun NasaImageView(
+    image: NasaImage,
+    onClick: ((NasaImage) -> Unit)? = null
+) {
 
     Log.i(TAG, "NasaImageView Composition");
     ImageOfTheDayTheme() {
@@ -32,7 +37,14 @@ fun NasaImageView(image: NasaImage) {
 
 
 
-        Column(modifier = Modifier.padding(top = 12.dp))
+        Column(
+            modifier = Modifier
+                .padding(top = 12.dp)
+                .clickable(
+                    enabled = onClick != null,
+                    onClick = { onClick?.invoke(image) }
+                )
+        )
         {
             Box(
                 Modifier

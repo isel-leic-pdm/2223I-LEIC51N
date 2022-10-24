@@ -14,11 +14,17 @@ import pt.isel.pdm.imageoftheday.R
 @Composable
 fun TopBar(
     showInfoScreen: (() -> Unit)? = null,
-    backButtonClicked: (() -> Unit)? = null
+    backButtonClicked: (() -> Unit)? = null,
+    title: (@Composable () -> Unit)? = null
 
 ) {
     TopAppBar(
-        title = { Text(text = stringResource(id = R.string.app_name)) },
+        title = {
+            if (title != null)
+                title()
+            else
+                Text(text = stringResource(id = R.string.app_name))
+        },
         actions = {
 
             if (showInfoScreen != null)

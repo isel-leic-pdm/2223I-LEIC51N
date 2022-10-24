@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import pt.isel.pdm.imageoftheday.ui.SocialAccount
+import pt.isel.pdm.imageoftheday.SocialAccount
 import pt.isel.pdm.imageoftheday.ui.theme.ImageOfTheDayTheme
 
 @Composable

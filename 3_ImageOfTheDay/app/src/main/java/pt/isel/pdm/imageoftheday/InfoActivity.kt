@@ -1,4 +1,4 @@
-package pt.isel.pdm.imageoftheday.ui
+package pt.isel.pdm.imageoftheday
 
 import android.content.Intent
 import android.net.Uri
