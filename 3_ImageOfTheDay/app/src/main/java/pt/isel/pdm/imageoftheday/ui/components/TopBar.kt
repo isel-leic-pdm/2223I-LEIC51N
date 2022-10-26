@@ -7,6 +7,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import pt.isel.pdm.imageoftheday.R
@@ -15,9 +16,11 @@ import pt.isel.pdm.imageoftheday.R
 fun TopBar(
     showInfoScreen: (() -> Unit)? = null,
     backButtonClicked: (() -> Unit)? = null,
-    title: (@Composable () -> Unit)? = null
+    title: (@Composable () -> Unit)? = null,
+    onListButtonClicked: (() -> Unit)? = null,
 
-) {
+
+    ) {
     TopAppBar(
         title = {
             if (title != null)
@@ -31,6 +34,12 @@ fun TopBar(
                 IconButton(onClick = { showInfoScreen() }) {
                     Icon(Icons.Default.Info, null)
                 }
+            if(onListButtonClicked != null)
+            {
+                IconButton(onClick = { onListButtonClicked() }) {
+                    Icon(Icons.Default.List, null)
+                }
+            }
         },
         navigationIcon = {
             if (backButtonClicked != null)

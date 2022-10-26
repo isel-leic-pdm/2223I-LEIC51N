@@ -29,6 +29,10 @@ class FakeNasaService : NasaImageOfTheDayService {
 
         throw InvalidParameterException("Date must be between Jun 16, 1995 and Oct 10, 2022.")
     }
+
+    override suspend fun getImages(count: Int): List<NasaImage> {
+        return NasaImages.Images;
+    }
 }
 
 //https://api.nasa.gov/planetary/apod?api_key=S6RMxbTyb9pAqhr823IBOzI3BNdtplUVxRRqw4z1&date=2022-01-03

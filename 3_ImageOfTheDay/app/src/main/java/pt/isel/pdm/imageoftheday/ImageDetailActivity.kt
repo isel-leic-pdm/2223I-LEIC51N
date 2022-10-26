@@ -32,8 +32,7 @@ class ImageDetailActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val nasaImage = navService.getDetailData(intent)
 
-        if (nasaImage == null)
-        {
+        if (nasaImage == null) {
             finish()
             return
         }

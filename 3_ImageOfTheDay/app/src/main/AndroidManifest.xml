@@ -17,6 +17,15 @@
         android:theme="@style/Theme.ImageOfTheDay"
         tools:targetApi="31">
         <activity
+            android:name=".ListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_list"
+            android:theme="@style/Theme.ImageOfTheDay">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ImageDetailActivity"
             android:exported="false"
             android:label="@string/title_activity_image_detail"

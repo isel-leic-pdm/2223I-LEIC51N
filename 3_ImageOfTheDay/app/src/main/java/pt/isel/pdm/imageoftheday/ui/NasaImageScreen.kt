@@ -25,14 +25,16 @@ fun NasaImageScreen(
     onNext: (() -> Unit)?,
     navigateToInfoActivity: () -> Unit,
     onImageClicked: (NasaImage) -> Unit,
-    isLoading: Boolean
+    isLoading: Boolean,
+    navigateToListActivity: () -> Unit
 ) {
     Log.i(TAG, "NasaImageScreen Composition");
 
     Scaffold(
         topBar = {
             TopBar(
-                showInfoScreen = { navigateToInfoActivity() }
+                showInfoScreen = navigateToInfoActivity,
+                onListButtonClicked = navigateToListActivity
             )
         },
     )

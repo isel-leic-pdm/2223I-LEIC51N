@@ -60,7 +60,9 @@ class MainActivity : ComponentActivity() {
                         onNext = onNext,
                         navigateToInfoActivity = { navService.navigateToInfo(this) },
                         isLoading = viewModel.isLoading,
-                        onImageClicked = { nasaImage -> navService.navigateToDetail(this, nasaImage) }
+                        onImageClicked = { nasaImage -> navService.navigateToDetail(this, nasaImage) },
+                        navigateToListActivity = {navService.navigateToList(this)}
+
                     )
 
                     ErrorView(viewModel.errorMessage, { err ->

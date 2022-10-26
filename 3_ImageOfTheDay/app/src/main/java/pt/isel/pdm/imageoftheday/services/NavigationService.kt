@@ -6,7 +6,8 @@ import pt.isel.pdm.imageoftheday.model.NasaImage
 
 interface NavigationService {
     fun navigateToInfo(ctx: Activity)
-    fun navigateToDetail(ctx: Activity, image:NasaImage)
+    fun navigateToDetail(ctx: Activity, image: NasaImage)
 
-    fun getDetailData(t: Intent) : NasaImage?
+    fun getDetailData(t: Intent): NasaImage?
+    fun navigateToList(ctx: Activity)
 }

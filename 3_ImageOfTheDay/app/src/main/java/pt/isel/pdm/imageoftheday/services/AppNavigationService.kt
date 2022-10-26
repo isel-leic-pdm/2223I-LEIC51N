@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Parcelable
 import pt.isel.pdm.imageoftheday.ImageDetailActivity
 import pt.isel.pdm.imageoftheday.InfoActivity
+import pt.isel.pdm.imageoftheday.ListActivity
 import pt.isel.pdm.imageoftheday.model.NasaImage
 import pt.isel.pdm.imageoftheday.model.dto.LocalNasaImageDto
 import pt.isel.pdm.imageoftheday.model.dto.NasaImage
@@ -44,6 +45,10 @@ class AppNavigationService : NavigationService {
         navigateTo<ImageDetailActivity>(ctx, DETAIL_EXTRA, image.toLocalDto())
     }
 
+    override fun navigateToList(ctx: Activity) {
+        navigateTo<ListActivity>(ctx)
+    }
+
     override fun getDetailData(t: Intent): NasaImage? {
         val data = t.getParcelableExtra<LocalNasaImageDto>(DETAIL_EXTRA);
 
@@ -52,6 +57,7 @@ class AppNavigationService : NavigationService {
 
         return NasaImage(data);
     }
+
 
     private inline fun <reified T> navigateTo(
         ctx: Activity,
