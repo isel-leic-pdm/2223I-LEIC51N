@@ -45,7 +45,8 @@ class ListActivity : ComponentActivity() {
                         images = viewModel.imageList,
                         onElementClicked = { navService.navigateToDetail(this, it) },
                         onRefreshClicked = viewModel::refresh,
-                        onBackClicked = { finish() }
+                        onBackClicked = { finish() },
+                        isLoading = viewModel.isLoading
                     )
                 }
             }

@@ -14,6 +14,7 @@ class ListViewModel(
     private val nasaService: NasaImageOfTheDayService
 ) : ViewModel() {
     var imageList by mutableStateOf<List<NasaImage>>(emptyList())
+    var isLoading by mutableStateOf(false)
 
 
     companion object {
@@ -22,7 +23,9 @@ class ListViewModel(
 
     fun refresh() {
         viewModelScope.launch {
+            isLoading = true
             imageList = nasaService.getImages(NUMBER_IMAGES_FETCHED)
+            isLoading = false
         }
     }
 }

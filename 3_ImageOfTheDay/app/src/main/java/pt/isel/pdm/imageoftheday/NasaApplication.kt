@@ -11,8 +11,8 @@ interface DependencyContainer {
 
 class NasaApplication : Application(), DependencyContainer {
     override val imageService by lazy {
-        //RemoteNasaService("https://api.nasa.gov/planetary/apod?api_key=S6RMxbTyb9pAqhr823IBOzI3BNdtplUVxRRqw4z1")
-        FakeNasaService()
+        RemoteNasaService("https://api.nasa.gov/planetary/apod?api_key=S6RMxbTyb9pAqhr823IBOzI3BNdtplUVxRRqw4z1")
+        //FakeNasaService()
     }
 
     override val navigationService by lazy {
