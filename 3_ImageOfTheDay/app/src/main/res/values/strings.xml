@@ -6,4 +6,8 @@
     <string name="title_activity_info">InfoActivity</string>
     <string name="title_activity_image_detail">ImageDetailActivity</string>
     <string name="title_activity_list">ListActivity</string>
+
+    <string name="error_api_title">Error accessing the server</string>
+    <string name="error_retry_button_text">Retry</string>
+    <string name="error">ERROR</string>
 </resources>

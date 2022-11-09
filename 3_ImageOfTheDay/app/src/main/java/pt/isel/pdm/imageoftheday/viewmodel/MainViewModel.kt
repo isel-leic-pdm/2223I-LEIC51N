@@ -29,14 +29,20 @@ class MainViewModel(private val nasaService: NasaImageOfTheDayService) : ViewMod
             isLoading = true
             val dateString = currDate.format(DateTimeFormatter.ISO_LOCAL_DATE)
             try {
-                nasaImage = nasaService.getImageOf(dateString)
+                nasaImage = nasaService.getImageOf(dateString, forceCache = true)
             } catch (e: Exception) {
-                errorMessage = e.message
+                try {
+                    nasaImage = nasaService.getImageOf(dateString, forceCache = false)
+                } catch (e: Exception) {
+                    errorMessage = e.message
+                }
             }
+
             isLoading = false
             canTurnOnNext = currDate < todayDate;
         }
     }
+
 
     fun fetchPrev() {
         currDate = currDate.minusDays(1)

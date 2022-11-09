@@ -21,7 +21,7 @@ class FakeNasaService : NasaImageOfTheDayService {
             }
         }
 
-    override suspend fun getImageOf(date: String): NasaImage {
+    override suspend fun getImageOf(date: String, cache: Boolean): NasaImage {
         delay(2000);
 
         if (imagesToReturn.containsKey(date))
@@ -29,6 +29,7 @@ class FakeNasaService : NasaImageOfTheDayService {
 
         throw InvalidParameterException("Date must be between Jun 16, 1995 and Oct 10, 2022.")
     }
+
 
     override suspend fun getImages(count: Int): List<NasaImage> {
         return NasaImages.Images;

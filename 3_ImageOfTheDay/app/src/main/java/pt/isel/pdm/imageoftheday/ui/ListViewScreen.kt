@@ -32,7 +32,7 @@ import pt.isel.pdm.imageoftheday.ui.theme.ImageOfTheDayTheme
 
 @Composable
 fun ListViewScreen(
-    images: List<NasaImage>,
+    images: List<NasaImage>?,
     isLoading: Boolean,
     onElementClicked: (NasaImage) -> Unit,
     onBackClicked: () -> Unit,
@@ -84,16 +84,17 @@ fun ListViewScreen(
 
             }
         }) {
-            var count = remember{0}
-            LazyColumn {
-                items(images)
-                { image ->
-                    Log.d("LazyCollumn", "Creating Component ${count++}")
-                    NasaImageViewCompact(image, onElementClicked)
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
+            var count = remember { 0 }
+            if (images != null)
+                LazyColumn {
+                    items(images)
+                    { image ->
+                        Log.d("LazyCollumn", "Creating Component ${count++}")
+                        NasaImageViewCompact(image, onElementClicked)
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
 
-            }
+                }
 
         }
     }

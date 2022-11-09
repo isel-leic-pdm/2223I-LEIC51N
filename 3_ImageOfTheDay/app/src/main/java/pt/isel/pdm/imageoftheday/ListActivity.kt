@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import pt.isel.pdm.imageoftheday.ui.ListViewScreen
+import pt.isel.pdm.imageoftheday.ui.components.ErrorAlert
 import pt.isel.pdm.imageoftheday.ui.theme.ImageOfTheDayTheme
 import pt.isel.pdm.imageoftheday.viewmodel.ListViewModel
 import pt.isel.pdm.imageoftheday.viewmodel.MainViewModel
@@ -41,12 +42,26 @@ class ListActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+
                     ListViewScreen(
-                        images = viewModel.imageList,
+                        images = viewModel.imageList?.getOrNull(),
                         onElementClicked = { navService.navigateToDetail(this, it) },
                         onRefreshClicked = viewModel::refresh,
                         onBackClicked = { finish() },
                         isLoading = viewModel.isLoading
+                    )
+
+
+                    ErrorAlert(
+                        state = viewModel.imageList,
+                        title = R.string.error,
+                        message = R.string.error_api_title,
+                        buttonText = R.string.error_retry_button_text,
+                        onDismiss = {},
+                        onButton = {
+                            viewModel.refresh()
+                        }
+
                     )
                 }
             }

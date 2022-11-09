@@ -13,7 +13,7 @@ import pt.isel.pdm.imageoftheday.services.NasaImageOfTheDayService
 class ListViewModel(
     private val nasaService: NasaImageOfTheDayService
 ) : ViewModel() {
-    var imageList by mutableStateOf<List<NasaImage>>(emptyList())
+    var imageList by mutableStateOf<Result<List<NasaImage>>?>(null)
     var isLoading by mutableStateOf(false)
 
 
@@ -24,7 +24,13 @@ class ListViewModel(
     fun refresh() {
         viewModelScope.launch {
             isLoading = true
-            imageList = nasaService.getImages(NUMBER_IMAGES_FETCHED)
+            imageList = try {
+                Result.success(nasaService.getImages(NUMBER_IMAGES_FETCHED))
+            }
+            catch (e:Exception)
+            {
+                Result.failure(e)
+            }
             isLoading = false
         }
     }
