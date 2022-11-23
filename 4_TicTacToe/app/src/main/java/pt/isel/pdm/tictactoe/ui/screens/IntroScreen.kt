@@ -24,15 +24,17 @@ import pt.isel.pdm.tictactoe.ui.components.PieceSelectorControl
 import pt.isel.pdm.tictactoe.ui.components.UserNameGetterControl
 import pt.isel.pdm.tictactoe.ui.theme.TicTacToeTheme
 
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun IntroScreen(
     userName: String,
+    pieceSelected: String,
     userNameChanged: (String) -> Unit,
+    onPieceSelected: (String) -> Unit,
+    setupCompleted: () -> Unit
 ) {
 
     var userNameFilled = remember {
-        mutableStateOf(false)
+        mutableStateOf(userName != "")
     }
     TicTacToeTheme {
         Box(modifier = Modifier.fillMaxSize())
@@ -45,12 +47,25 @@ fun IntroScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
             else
-                PieceSelectorControl()
+                PieceSelectorControl(
+                    pieceSelected = pieceSelected,
+                    onPieceSelected = onPieceSelected,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+
+            val buttonEnabled =
+                userName != "" && !userNameFilled.value || pieceSelected != "" && userNameFilled.value
+
 
             Button(
                 onClick = {
-                    userNameFilled.value = true
+                    if (userNameFilled.value == false)
+                        userNameFilled.value = true
+                    else {
+                        setupCompleted()
+                    }
                 },
+                enabled = buttonEnabled,
                 shape = CircleShape,
                 modifier = Modifier
                     .defaultMinSize(minWidth = 64.dp, minHeight = 64.dp)
