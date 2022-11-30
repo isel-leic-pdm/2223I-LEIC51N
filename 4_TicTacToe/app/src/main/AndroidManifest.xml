@@ -16,6 +16,15 @@
         android:theme="@style/Theme.TicTacToe"
         tools:targetApi="31">
         <activity
+            android:name=".ConnectActivity"
+            android:exported="false"
+            android:label="@string/title_activity_connect"
+            android:theme="@style/Theme.TicTacToe">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".MenuActivity"
             android:exported="false"
             android:label="@string/title_activity_menu"

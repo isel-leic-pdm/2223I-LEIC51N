@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Parcelable
-import pt.isel.pdm.tictactoe.MenuActivity
+import pt.isel.pdm.tictactoe.ConnectActivity
 
 class AppNavigationService(
 ) : NavigationService{
@@ -24,6 +24,6 @@ class AppNavigationService(
     }
 
     override fun navigateToMenu(ctx: Context) {
-        navigateTo<MenuActivity>(ctx);
+        navigateTo<ConnectActivity>(ctx);
     }
 }

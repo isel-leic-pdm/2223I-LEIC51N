@@ -2,4 +2,7 @@
     <string name="app_name">TicTacToe</string>
     <string name="user_name">User Name</string>
     <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_connect">ConnectActivity</string>
+    <string name="create_lobby">Create Lobby</string>
+    <string name="waiting_for_player">Waiting for Another Player</string>
 </resources>
