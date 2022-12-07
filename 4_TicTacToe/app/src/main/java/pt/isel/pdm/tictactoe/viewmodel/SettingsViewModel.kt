@@ -16,7 +16,9 @@ class SettingsViewModel(
 
     fun userDataExists(): Boolean {
         return userRepo.getUserData() != null
+
     }
+
 
     fun saveUserData() {
         userRepo.setUserData(UserData(userName, piece))

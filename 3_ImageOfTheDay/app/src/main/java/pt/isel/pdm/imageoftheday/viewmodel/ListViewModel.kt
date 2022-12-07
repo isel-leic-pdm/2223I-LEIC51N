@@ -21,8 +21,13 @@ class ListViewModel(
         const val NUMBER_IMAGES_FETCHED = 15
     }
 
+    fun abc(){}
+
     fun refresh() {
+        var xpto : Int;
+        viewModelScope.launch {abc()}
         viewModelScope.launch {
+            xpto = 2;
             isLoading = true
             imageList = try {
                 Result.success(nasaService.getImages(NUMBER_IMAGES_FETCHED))

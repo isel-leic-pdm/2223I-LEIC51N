@@ -9,8 +9,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withStarted
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,8 +24,8 @@ import pt.isel.pdm.tictactoe.ui.theme.TicTacToeTheme
 import pt.isel.pdm.tictactoe.viewmodel.ConnectViewModel
 import pt.isel.pdm.tictactoe.viewmodel.SettingsViewModel
 
-class ConnectActivity : BaseActivity() {
-    private val viewModel: ConnectViewModel by viewModels {
+class ConnectActivity : BaseActivity<ConnectViewModel>() {
+    override val viewModel: ConnectViewModel by viewModels {
         viewModelInit {
             ConnectViewModel(
                 dependencyContainer.gameService,
@@ -34,7 +37,14 @@ class ConnectActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.loadLobbies()
-        setContent {
+
+        safeSetContent {
+
+            LaunchedEffect(viewModel.gameId) {
+                if (viewModel.gameId != null)
+                    navigationService.navigateToGame(this@ConnectActivity, viewModel.gameId!!)
+
+            }
             TicTacToeTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -49,7 +59,7 @@ class ConnectActivity : BaseActivity() {
                         )
                     else
                         ConnectingScreen(
-                            backClicked = {viewModel.leaveLobby()}
+                            backClicked = { viewModel.leaveLobby() }
                         )
                 }
             }
@@ -58,10 +68,16 @@ class ConnectActivity : BaseActivity() {
 
     override fun onPause() {
         super.onPause()
-
+        viewModel.leaveLobby()
     }
 
-    override fun onResume() {
-        super.onResume()
+
+    override fun onBackPressed() {
+        if (!viewModel.isJoiningOrWaitingForPlayer)
+            super.onBackPressed()
+        else
+            viewModel.leaveLobby()
     }
+
+
 }

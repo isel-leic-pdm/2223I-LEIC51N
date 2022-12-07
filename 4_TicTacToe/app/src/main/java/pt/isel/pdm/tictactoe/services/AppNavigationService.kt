@@ -5,15 +5,20 @@ import android.content.Context
 import android.content.Intent
 import android.os.Parcelable
 import pt.isel.pdm.tictactoe.ConnectActivity
+import pt.isel.pdm.tictactoe.GameActivity
 
 class AppNavigationService(
-) : NavigationService{
+) : NavigationService {
 
+
+    companion object {
+        const val GAME_EXTRA = "GAME_EXTRA"
+    }
 
     private inline fun <reified T> navigateTo(
-        context : Context,
+        context: Context,
         argumentName: String? = null,
-        obj: Parcelable? = null
+        obj: String? = null
     ) {
         val intent = Intent(context, T::class.java)
 
@@ -25,5 +30,13 @@ class AppNavigationService(
 
     override fun navigateToMenu(ctx: Context) {
         navigateTo<ConnectActivity>(ctx);
+    }
+
+    override fun navigateToGame(ctx: Context, gameId: String) {
+        navigateTo<GameActivity>(ctx, GAME_EXTRA, gameId)
+    }
+
+    override fun getGameIdExtra(ctx: Activity): String? {
+        return ctx.intent.getStringExtra(GAME_EXTRA)
     }
 }

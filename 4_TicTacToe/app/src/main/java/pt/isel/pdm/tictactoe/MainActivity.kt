@@ -22,9 +22,9 @@ import pt.isel.pdm.tictactoe.ui.screens.IntroScreen
 import pt.isel.pdm.tictactoe.ui.theme.TicTacToeTheme
 import pt.isel.pdm.tictactoe.viewmodel.SettingsViewModel
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity<SettingsViewModel>() {
 
-    private val viewModel: SettingsViewModel by viewModels {
+    override val viewModel: SettingsViewModel by viewModels {
         viewModelInit {
             SettingsViewModel(dependencyContainer.userRepository)
         }
@@ -38,7 +38,7 @@ class MainActivity : BaseActivity() {
             return
         }
 
-        setContent {
+        safeSetContent {
             TicTacToeTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -65,7 +65,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun navigateToMenuAndFinish() {
-        navigationService.navigateToMenu(this)
+        //navigationService.navigateToMenu(this)
+        navigationService.navigateToGame(this, "")
         finish()
     }
 }
