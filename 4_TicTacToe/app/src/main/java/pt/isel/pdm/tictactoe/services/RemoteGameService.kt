@@ -13,7 +13,9 @@ interface RemoteGameService {
     suspend fun start(gameId: String): RemoteGame
     suspend fun play(game: RemoteGame, moveIdx: Int)
     suspend fun waitForPlay(game: RemoteGame): Int
+    suspend fun leaveGame(game: RemoteGame)
 
-
-    suspend fun onOtherPlayerStateChanged() : RemoteGame
+    suspend fun onOtherPlayerStateChanged(): RemoteGame
 }
+
+class GameEndedException(message: String) : Exception(message)

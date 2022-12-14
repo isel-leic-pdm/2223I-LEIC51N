@@ -19,6 +19,15 @@ class SettingsViewModel(
 
     }
 
+    fun loadUserData()
+    {
+        var usr = userRepo.getUserData()
+        if(usr == null)
+            return
+
+        piece = usr.favPlay
+        userName = usr.userName
+    }
 
     fun saveUserData() {
         userRepo.setUserData(UserData(userName, piece))

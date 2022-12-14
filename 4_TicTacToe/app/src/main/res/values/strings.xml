@@ -8,4 +8,8 @@
     <string name="error">Error</string>
     <string name="error_button">ok</string>
     <string name="title_activity_game">GameActivity</string>
+    <string name="player_won">You won congrats!</string>
+    <string name="player_draw">This match is draw</string>
+    <string name="player_lose">You lost hahahahah!</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>

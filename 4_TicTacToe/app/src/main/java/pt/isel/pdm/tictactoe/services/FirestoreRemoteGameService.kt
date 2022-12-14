@@ -5,6 +5,7 @@ import android.provider.Settings
 import android.util.Log
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -39,6 +40,10 @@ class FirestoreRemoteGameService(
         const val LOBBY_GAMEID = "gameId"
         const val GAME_PLAYER1 = "player1"
         const val GAME_PLAYER2 = "player2"
+
+        const val GAME_PLAYER_STATE_EXIT = 2
+        const val GAME_PLAYER_STATE_TIMEOUT = 20
+
         const val GAME_PLAYER1_KEY = '1'
         const val GAME_PLAYER2_KEY = '2'
         const val GAME_EMPTY_BOARD = "_________"
@@ -97,7 +102,7 @@ class FirestoreRemoteGameService(
 
         var gameData = hashMapOf(
             GAME_PLAYER1 to lobby.displayName,
-            GAME_BOARD to GAME_EMPTY_BOARD
+            GAME_BOARD to GAME_EMPTY_BOARD,
         )
 
         //
@@ -205,10 +210,19 @@ class FirestoreRemoteGameService(
         g.board = String(arr)
         g.isMyTurn = false
 
+        try {
+
         _db.collection(GAME_COLLECTION)
             .document(game.gameId)
             .update(GAME_BOARD, g.board)
             .await()
+
+        }catch (e: FirebaseFirestoreException)
+        {
+            if(e.code == FirebaseFirestoreException.Code.NOT_FOUND)
+                throw GameEndedException("Game ended")
+            throw e
+        }
     }
 
     override suspend fun waitForPlay(game: RemoteGame): Int {
@@ -219,6 +233,10 @@ class FirestoreRemoteGameService(
             g,
             _db.collection(GAME_COLLECTION).document(game.gameId)
         ) { doc ->
+
+            if(doc.exists() == false)
+                throw GameEndedException("Other player left game")
+
             val remoteGame = buildRemoteGame(doc)
             if (g.board != remoteGame.gameId) {
                 for (index in 0..remoteGame.board.length - 1) {
@@ -234,6 +252,10 @@ class FirestoreRemoteGameService(
 
         }
         return ret!!
+    }
+
+    override suspend fun leaveGame(game: RemoteGame) {
+        _db.collection(GAME_COLLECTION).document(game.gameId).delete()
     }
 
     override suspend fun onOtherPlayerStateChanged(): RemoteGame {

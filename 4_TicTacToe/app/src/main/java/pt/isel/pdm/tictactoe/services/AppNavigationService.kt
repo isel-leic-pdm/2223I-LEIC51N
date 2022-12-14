@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Parcelable
 import pt.isel.pdm.tictactoe.ConnectActivity
 import pt.isel.pdm.tictactoe.GameActivity
+import pt.isel.pdm.tictactoe.SettingsActivity
 
 class AppNavigationService(
 ) : NavigationService {
@@ -30,6 +31,10 @@ class AppNavigationService(
 
     override fun navigateToMenu(ctx: Context) {
         navigateTo<ConnectActivity>(ctx);
+    }
+
+    override fun navigateToSettings(ctx: Context) {
+        navigateTo<SettingsActivity>(ctx);
     }
 
     override fun navigateToGame(ctx: Context, gameId: String) {

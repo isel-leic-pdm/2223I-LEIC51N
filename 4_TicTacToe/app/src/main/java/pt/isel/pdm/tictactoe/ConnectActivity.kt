@@ -36,7 +36,6 @@ class ConnectActivity : BaseActivity<ConnectViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.loadLobbies()
 
         safeSetContent {
 
@@ -55,7 +54,8 @@ class ConnectActivity : BaseActivity<ConnectViewModel>() {
                         ConnectOptionsScreen(
                             lobbies = viewModel.lobbies,
                             joinLobby = { viewModel.joinLobby(it) },
-                            createLobby = { viewModel.createLobby() }
+                            createLobby = { viewModel.createLobby() },
+                            showSettings = { navigationService.navigateToSettings(this) }
                         )
                     else
                         ConnectingScreen(
@@ -71,7 +71,11 @@ class ConnectActivity : BaseActivity<ConnectViewModel>() {
         viewModel.leaveLobby()
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadLobbies()
+    }
+    
     override fun onBackPressed() {
         if (!viewModel.isJoiningOrWaitingForPlayer)
             super.onBackPressed()

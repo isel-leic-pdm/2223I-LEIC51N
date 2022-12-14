@@ -48,6 +48,10 @@ class FakeRemoteService : RemoteGameService {
         TODO("Not yet implemented")
     }
 
+    override suspend fun leaveGame(game: RemoteGame) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun onOtherPlayerStateChanged(): RemoteGame {
         TODO("Not yet implemented")
     }

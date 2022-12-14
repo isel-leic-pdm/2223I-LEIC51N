@@ -1,7 +1,6 @@
 package pt.isel.pdm.tictactoe
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -12,17 +11,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.*
-import kotlinx.coroutines.tasks.await
 import pt.isel.pdm.tictactoe.helpers.viewModelInit
-import pt.isel.pdm.tictactoe.ui.screens.IntroScreen
+import pt.isel.pdm.tictactoe.ui.screens.SettingsScreen
 import pt.isel.pdm.tictactoe.ui.theme.TicTacToeTheme
 import pt.isel.pdm.tictactoe.viewmodel.SettingsViewModel
 
-class MainActivity : BaseActivity<SettingsViewModel>() {
+class SettingsActivity : BaseActivity<SettingsViewModel>() {
 
     override val viewModel: SettingsViewModel by viewModels {
         viewModelInit {
@@ -32,41 +26,25 @@ class MainActivity : BaseActivity<SettingsViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (viewModel.userDataExists()) {
-            navigateToMenuAndFinish()
-            return
-        }
-
-        safeSetContent {
+        viewModel.loadUserData()
+        setContent {
             TicTacToeTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    IntroScreen(
+                    SettingsScreen(
                         userName = viewModel.userName,
+                        userNameChanged = { viewModel.userName = it },
                         pieceSelected = viewModel.piece,
-                        userNameChanged = {
-                            viewModel.userName = it
-                        },
-                        onPieceSelected = {
-                            viewModel.piece = it
-                        },
-                        setupCompleted = {
-                            viewModel.saveUserData()
-                            navigateToMenuAndFinish()
-                        }
+                        onPieceSelected = { viewModel.piece = it },
+                        backClicked = { finish() },
+                        saveClicked = { viewModel.saveUserData() }
                     )
                 }
             }
         }
     }
-
-    private fun navigateToMenuAndFinish() {
-        navigationService.navigateToMenu(this)
-        //navigationService.navigateToGame(this, "")
-        finish()
-    }
 }
+

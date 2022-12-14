@@ -20,10 +20,16 @@ import pt.isel.pdm.tictactoe.ui.components.TopBar
 fun ConnectOptionsScreen(
     lobbies: List<Lobby>,
     createLobby: () -> Unit,
-    joinLobby: (Lobby) -> Unit
-) {
+    joinLobby: (Lobby) -> Unit,
+    showSettings: () -> Unit,
+
+    ) {
     Scaffold(
-        topBar = { TopBar() },
+        topBar = {
+            TopBar(
+                showSettings = showSettings
+            )
+        },
         floatingActionButton = {
             Button(
                 onClick = { createLobby() },
@@ -49,8 +55,8 @@ fun ConnectOptionsScreen(
                         .fillMaxWidth()
                         .padding(6.dp)
                         .clickable {
-                        joinLobby(lobby)
-                    },
+                            joinLobby(lobby)
+                        },
                     fontSize = 20.sp
                 )
                 Spacer(

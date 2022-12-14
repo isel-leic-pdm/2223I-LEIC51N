@@ -8,28 +8,32 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import pt.isel.pdm.tictactoe.model.*
+import pt.isel.pdm.tictactoe.repository.PlayedGamesRepository
 import pt.isel.pdm.tictactoe.repository.UserRepository
+import pt.isel.pdm.tictactoe.services.GameEndedException
 import pt.isel.pdm.tictactoe.services.RemoteGameService
 import kotlin.random.Random
 
 class GameViewModel(
     private val gameService: RemoteGameService,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val playedGamesRepository: PlayedGamesRepository
 ) : ViewModelBase() {
+
+    private lateinit var _gameHistory: PlayedGame
     private lateinit var _remoteGame: RemoteGame
     val board: List<Cell>
         get() = _list
 
     var gameState: GameState by mutableStateOf(GameState.INVALID)
     var canPlay by mutableStateOf(false)
-    //var canPlay: Boolean by mutableStateOf(false)
+    var playerWon = false
 
     private var _plays = 0
     private var _list = mutableStateListOf<Cell>()
     private var _currPlayer = CellState.EMPTY
 
     fun startGame(gameId: String) {
-
         _list.clear()
 
         //remote set play
@@ -40,7 +44,7 @@ class GameViewModel(
         safeViewModelScopeLaunch {
             _remoteGame = gameService.start(gameId)
             canPlay = _remoteGame.isMyTurn
-
+            _gameHistory = playedGamesRepository.findByName(_remoteGame.otherPlayerName)
             val favPlay = getUserFavCellState()
 
             if (canPlay)
@@ -57,9 +61,22 @@ class GameViewModel(
     private suspend fun waitForPlayerAndNotifyItsMove() {
         canPlay = false
         safeViewModelScopeLaunch {
-            val playIndex = gameService.waitForPlay(_remoteGame)
-            playOnCurrentCell(board[playIndex], isLocalMove = false)
-            canPlay = true
+            try {
+                val playIndex = gameService.waitForPlay(_remoteGame)
+                playOnCurrentCell(board[playIndex], isLocalMove = false)
+                canPlay = true
+
+            } catch (e: GameEndedException) {
+                handleGameEnding()
+            }
+        }
+    }
+
+    private fun handleGameEnding() {
+        if (gameState == GameState.ONGOING) {
+            playerWon = true
+            gameState = GameState.ENDED
+            _gameHistory.wins++
         }
     }
 
@@ -75,22 +92,51 @@ class GameViewModel(
         _list.set(moveIndex, Cell(c.x, c.y, _currPlayer))
 
         _plays++
-        if (Cells.checkPlayerWin(board))
+        if (Cells.checkPlayerWin(board)) {
+            playerWon = isLocalMove
             gameState = GameState.ENDED
-        else if (_plays == board.size)
+            if (playerWon)
+                _gameHistory.wins++
+            else
+                _gameHistory.loses++
+
+        } else if (_plays == board.size) {
             gameState = GameState.DRAW
+            _gameHistory.draws++
+
+        }
 
         changePlayer();
 
         if (isLocalMove) {
             safeViewModelScopeLaunch {
-                gameService.play(_remoteGame, moveIndex)
+                try {
+                    gameService.play(_remoteGame, moveIndex)
+                } catch (e: GameEndedException) {
+                    handleGameEnding()
+                    return@safeViewModelScopeLaunch
+                }
+
                 waitForPlayerAndNotifyItsMove()
             }
+        }
+    }
+
+    fun leaveGame() {
+        safeViewModelScopeLaunch {
+            //
+            //  As is this can cause a race condition where the player that ended the game
+            //  leaves the game before the other checks its move, the leave as is implemented
+            //  will delete the document on firestore thus causing this issue
+            //
+            gameService.leaveGame(_remoteGame)
+            playedGamesRepository.update(_gameHistory)
         }
     }
 
     private fun changePlayer() {
         _currPlayer = if (_currPlayer == CellState.O) CellState.X else CellState.O
     }
+
+
 }
